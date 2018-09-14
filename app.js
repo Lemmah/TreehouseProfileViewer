@@ -1,16 +1,19 @@
 // Problem: We need an easy way to look at a Treehouse user's badge count and JavaScript points on the webrowser.
 // Solution: Use Nodejs to perform the profile look ups and serve our templates via HTTP
 
-// 1. Create a http web server.
 const http = require('http');
 
 /**
  * Creates a http server that listens on port 8000.
  */
-const server = http.createServer((req, res) => {
-  res.writeHead(200, {'Content-Type': 'text/plain'});
-  res.write('This is before the end.\n');
-  res.end('Hello, World.\n');
+const server = http.createServer((request, response) => {
+  response.writeHead(200, {'Content-Type': 'text/plain'});
+  const profileUrl = /\/\w+/.test(request.url);
+  if (request.url === '/') {
+    homeRoute(request, response);
+  } else if (profileUrl) {
+    response.end(`Redirecting to ${request.url.slice(1)}`);
+  }
 });
 server.on('clientError', (err, socket) => {
   socket.end('HTTP/1.1 400 Bad Request\r\n\r\n');
@@ -18,12 +21,24 @@ server.on('clientError', (err, socket) => {
 server.listen(8000);
 
 
-// 2. Handle HTTP route GET / or POST / ie Home
+/**
+ * Handles HTTP route GET  or POST  for / ie Home
+ * @param {Object} request - The http incoming request or message.
+ * @param {Object} response - The response message the server will send.
+ */
+function homeRoute(request, response) {
   // if url == '/' & GET
     // show search
-  // if url == '/' & POST
-    // redirect to /:username
-  
+    if (request.method === 'GET') {
+      response.write('Header.\n');
+      response.write('Body.\n');
+      response.end('Footer.\n');
+    } else if (request.method === 'POST') {
+      // if url == '/' & POST
+      // redirect to /:username
+      response.end('Redirecting to ...')
+    }
+}
 
 // 3. Handle HTTP route GET /:username eg /lemmah
   // if url == '/:username' & GET
