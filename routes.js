@@ -1,3 +1,5 @@
+const Profile = require('./profile.js');
+
 /**
  * Handles HTTP route GET  or POST  for / ie Home
  * @param {Object} request - The http incoming request or message.
@@ -13,7 +15,8 @@ function home(request, response) {
     } else if (request.method === 'POST') {
       // if url == '/' & POST
       // redirect to /:username
-      response.end('Redirecting to ...')
+      response.end(`Redirecting to ${request.url.slice(1)} ...`);
+      user(request, response);
     } else {
       response.end('Method not allowed.')
     }
@@ -29,12 +32,23 @@ function user(request, response) {
   if (request.method === 'GET') {
     response.write('Header.\n');
     response.write(`${request.url.slice(1)}\n`);
-    response.end('Footer.\n');
     // get JSON from Treehouse
+    const userProfile = new Profile(`${request.url.slice(1)}`);
       // on 'end'
         // show profile
+    userProfile.on('end', userData => {
+      const values = {
+        gravatarUrl: userData.gravatar_url,
+        name: userData.name,
+        userName: userData.profile_name,
+        badgeCount: userData.badges.length,
+        javaScriptPoints: userData.points.JavaScript
+      }
+      response.end(`${values.name} has ${values.badgeCount} badges and ${values.javaScriptPoints} in JavaScript.`);
+    });
       // on 'error'
         // show error
+    userProfile.on('error', error => response.end(error.message));
   }
 }
 
