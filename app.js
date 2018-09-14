@@ -20,7 +20,3 @@ server.on('clientError', (err, socket) => {
   socket.end('HTTP/1.1 400 Bad Request\r\n\r\n');
 });
 server.listen(8000);
-
-// 4. Function that handles the reading of files and merge in values
-  // read from file and get a string
-  // merge values into string

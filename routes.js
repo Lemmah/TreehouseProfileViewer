@@ -1,4 +1,5 @@
 const Profile = require('./profile.js');
+const renderer = require('./renderer.js');
 
 /**
  * Handles HTTP route GET  or POST  for / ie Home
@@ -9,16 +10,20 @@ function home(request, response) {
   // if url == '/' & GET
     // show search
     if (request.method === 'GET') {
-      response.write('Header.\n');
-      response.write('Search.\n');
-      response.end('Footer.\n');
+      renderer.view('header', {}, response);
+      renderer.view('search', {}, response);
+      renderer.view('footer', {}, response);
+      response.end();
     } else if (request.method === 'POST') {
       // if url == '/' & POST
       // redirect to /:username
-      response.end(`Redirecting to ${request.url.slice(1)} ...`);
-      user(request, response);
+      users(request, response);
+      response.end();
     } else {
-      response.end('Method not allowed.')
+      renderer.view('header', {}, response);
+      renderer.view('error', { errorMessage: 'Method not allowed' });
+      renderer.view('footer', {}, response);
+      response.end();
     }
 }
 
@@ -30,12 +35,10 @@ function home(request, response) {
 function user(request, response) {
   // if url == '/:username' & GET
   if (request.method === 'GET') {
-    response.write('Header.\n');
-    response.write(`${request.url.slice(1)}\n`);
-    // get JSON from Treehouse
+    renderer.view('header', {}, response);
+    // get JSON from Treehouse using username
     const userProfile = new Profile(`${request.url.slice(1)}`);
-      // on 'end'
-        // show profile
+    // on 'end' show profile
     userProfile.on('end', userData => {
       const values = {
         gravatarUrl: userData.gravatar_url,
@@ -44,11 +47,17 @@ function user(request, response) {
         badgeCount: userData.badges.length,
         javaScriptPoints: userData.points.JavaScript
       }
-      response.end(`${values.name} has ${values.badgeCount} badges and ${values.javaScriptPoints} in JavaScript.`);
+      renderer.view('profile', values, response);
+      renderer.view('footer', {}, response);
+      response.end();
     });
-      // on 'error'
-        // show error
-    userProfile.on('error', error => response.end(error.message));
+    // on 'error' show error
+    userProfile.on('error', error => {
+      renderer.view('error', { errorMessage: error.message }, response);
+      renderer.view('search', {}, response);
+      renderer.view('footer', {}, response);
+      response.end();
+    });
   }
 }
 
