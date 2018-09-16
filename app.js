@@ -2,7 +2,7 @@
 // Solution: Use Nodejs to perform the profile look ups and serve our templates via HTTP
 
 const http = require('http');
-const routes = require('./routes.js');
+const routes = require('./scripts/router.js');
 
 /**
  * Creates a http server that listens on port 8000.
