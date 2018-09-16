@@ -1,5 +1,6 @@
 const Profile = require('./profile.js');
 const renderer = require('./renderer.js');
+const querystring = require('querystring');
 
 /**
  * Handles HTTP route GET  or POST  for / ie Home
@@ -7,22 +8,27 @@ const renderer = require('./renderer.js');
  * @param {Object} response - The response message the server will send.
  */
 function home(request, response) {
-  // if url == '/' & GET
-    // show search
     if (request.method === 'GET') {
+      // if url == '/' & GET
+        // show search
       renderer.view('header', {}, response);
       renderer.view('search', {}, response);
       renderer.view('footer', {}, response);
+      response.end();
     } else if (request.method === 'POST') {
       // if url == '/' & POST
-      // redirect to /:username
-      user(request, response);
+        // redirect to /:username
+      request.on('data', function(postBody){
+        let query = querystring.parse(postBody.toString());
+        response.writeHead(303, { 'Location': '/' + query.username });
+        response.end();
+      });
     } else {
       renderer.view('header', {}, response);
       renderer.view('error', { errorMessage: 'Method not allowed' });
       renderer.view('footer', {}, response);
+      response.end();
     }
-  response.end();
 }
 
 /**
