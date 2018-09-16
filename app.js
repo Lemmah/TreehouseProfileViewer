@@ -8,7 +8,7 @@ const routes = require('./routes.js');
  * Creates a http server that listens on port 8000.
  */
 const server = http.createServer((request, response) => {
-  response.writeHead(200, {'Content-Type': 'text/plain'});
+  response.writeHead(200, {'Content-Type': 'text/html'});
   const profileUrl = /\/\w+/.test(request.url);
   if (request.url === '/') {
     routes.home(request, response);

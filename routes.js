@@ -13,18 +13,16 @@ function home(request, response) {
       renderer.view('header', {}, response);
       renderer.view('search', {}, response);
       renderer.view('footer', {}, response);
-      response.end();
     } else if (request.method === 'POST') {
       // if url == '/' & POST
       // redirect to /:username
-      users(request, response);
-      response.end();
+      user(request, response);
     } else {
       renderer.view('header', {}, response);
       renderer.view('error', { errorMessage: 'Method not allowed' });
       renderer.view('footer', {}, response);
-      response.end();
     }
+  response.end();
 }
 
 /**
