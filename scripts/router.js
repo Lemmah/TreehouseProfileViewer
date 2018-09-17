@@ -25,7 +25,7 @@ function home(request, response) {
       });
     } else {
       renderer.view('header', {}, response);
-      renderer.view('error', { errorMessage: 'Method not allowed' });
+      renderer.view('error', { errorMessage: 'Method not allowed' }, response);
       renderer.view('footer', {}, response);
       response.end();
     }

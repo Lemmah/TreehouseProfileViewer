@@ -9,11 +9,13 @@ const routes = require('./scripts/router.js');
  */
 const server = http.createServer((request, response) => {
   response.writeHead(200, {'Content-Type': 'text/html'});
-  const profileUrl = /\/\w+/.test(request.url);
+  const profileUrl = /^\/\w+$/.test(request.url);
   if (request.url === '/') {
     routes.home(request, response);
   } else if (profileUrl) {
     routes.user(request, response);
+  } else {
+    response.end('Not found');
   }
 });
 server.on('clientError', (err, socket) => {
